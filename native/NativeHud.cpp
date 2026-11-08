@@ -1,4 +1,4 @@
-// MIT. Native layered HUD; every window and worker belongs to Spotify.exe.
+// MIT. Native layered lyrics window; every window and worker belongs to Spotify.exe.
 #include "NativeCore.h"
 #include "NativeHud.h"
 #include "fullscreen.h"
@@ -319,6 +319,8 @@ struct Hud
     void setEnabled(bool value)
     {
         enabled = value;
+        lastPoll = 0;
+        SetTimer(window, 2, value ? 1000 : 5000, nullptr);
         if (!value)
         {
             endSizeMove();
@@ -329,6 +331,7 @@ struct Hud
         saveSettings();
         if (value)
         {
+            server.broadcast({{"type", "getPlayback"}});
             ShowWindow(window, SW_SHOWNOACTIVATE);
             frames.request();
         }
@@ -577,7 +580,8 @@ struct Hud
             if (!lines.empty() &&
                 renderer.prepare(lyricText, fontSize, width - 48,
                                  std::max(1, static_cast<int>((h - top) * 0.64f - 12))) &&
-                renderer.begin(width, height, top, antialias))
+                renderer.begin(width, height, top, antialias, true,
+                               static_cast<int>(std::ceil(renderer.contentWidth() + fontSize * 2 + 48))))
             {
                 if (lyricLayoutRevision != renderer.revision())
                 {
@@ -730,11 +734,12 @@ struct Hud
         const double dt = lastRenderTime ? std::min(0.05, frameNow - lastRenderTime) : 1.0 / 60;
         if (sizingMoving)
             applyDrag();
-        if (now - lastPoll >= 250)
+        const bool visible = enabled || alpha > 0;
+        if (now - lastPoll >= (visible ? 250u : 1000u))
         {
             lastPoll = now;
             HWND front = GetForegroundWindow();
-            bool value = front != window && front != form.window && IsFullscreenWindow(front, 0);
+            bool value = visible && front != window && front != form.window && IsFullscreenWindow(front, 0);
             if (value != locked)
             {
                 locked = value;
@@ -751,7 +756,6 @@ struct Hud
                 SetWindowPos(window, HWND_TOPMOST, 0, 0, 0, 0,
                              SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
             }
-            health();
         }
         auto animating = [&] {
             if (std::abs(alpha - (enabled ? 1.0 : 0.0)) > 0.001 ||
@@ -778,12 +782,12 @@ struct Hud
         {
             ShowWindow(window, SW_HIDE);
             glass.sync(16, opacityControl, 0);
-            // Fullscreen rasters can otherwise retain tens of MiB after closing the HUD.
+            // Fullscreen rasters can otherwise retain tens of MiB after closing the lyrics window.
             // Keep layouts, so reopening does not remeasure every lyric.
             releaseCanvas();
             renderer.releaseSurface();
             uiText.releaseSurface();
-            return 0.25;
+            return 1.0;
         }
         if (sizingMoving)
             return dragInterval;
@@ -868,6 +872,9 @@ static LRESULT CALLBACK HudProc(HWND window, UINT message, WPARAM w, LPARAM l)
     {
         switch (message)
         {
+        case HudHealth:
+            hud->health();
+            return 1;
         case HudStyle::AppearanceChanged:
             hud->dirty = true;
             hud->frames.request();
@@ -1124,7 +1131,7 @@ void RunNativeHud(HMODULE module, const std::wstring &spotify, const std::wstrin
     hud->server.start();
     if (hud->enabled)
         ShowWindow(hud->window, SW_SHOWNOACTIVATE);
-    SetTimer(hud->window, 2, 1000, nullptr);
+    SetTimer(hud->window, 2, hud->enabled ? 1000 : 5000, nullptr);
     MSG message{};
     for (;;)
     {

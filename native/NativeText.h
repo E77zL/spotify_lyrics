@@ -27,8 +27,12 @@ class NativeText
     std::vector<DWRITE_TEXT_METRICS> metrics;
     std::vector<float> fittedSizes;
     int width = 0, height = 0, smoothing = -1, measuredSize = 0, measuredWidth = 0, measuredHeight = 0;
+    int originX = 0;
+    float widestText = 0;
     uint64_t layoutRevision = 0;
     bool drawing = false, pixelsValid = false;
+    bool clearAll = true;
+    int inkTop = 0, inkBottom = 0;
     bool fading = true;
     HRESULT error = S_OK;
 
@@ -41,19 +45,32 @@ class NativeText
     {
         if (factory && fonts && imaging && roundStroke)
             return true;
-        factory.Reset();
-        fonts.Reset();
-        imaging.Reset();
-        roundStroke.Reset();
-        if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, factory.GetAddressOf())) ||
-            FAILED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
-                                       reinterpret_cast<IUnknown **>(fonts.GetAddressOf()))) ||
-            FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
-                                    IID_PPV_ARGS(imaging.GetAddressOf()))))
+        // Lyrics, toolbar and settings share thread-affine factories and font caches.
+        struct Resources
+        {
+            Com<ID2D1Factory> factory;
+            Com<IDWriteFactory> fonts;
+            Com<IWICImagingFactory> imaging;
+            Com<ID2D1StrokeStyle> roundStroke;
+        };
+        static thread_local Resources shared;
+        if (!shared.factory && FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, shared.factory.GetAddressOf())))
+            return false;
+        if (!shared.fonts && FAILED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
+                                       reinterpret_cast<IUnknown **>(shared.fonts.GetAddressOf()))))
+            return false;
+        if (!shared.imaging && FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
+                                    IID_PPV_ARGS(shared.imaging.GetAddressOf()))))
             return false;
         D2D1_STROKE_STYLE_PROPERTIES stroke = D2D1::StrokeStyleProperties();
         stroke.startCap = stroke.endCap = D2D1_CAP_STYLE_ROUND;
-        return SUCCEEDED(factory->CreateStrokeStyle(stroke, nullptr, 0, roundStroke.GetAddressOf()));
+        if (!shared.roundStroke && FAILED(shared.factory->CreateStrokeStyle(stroke, nullptr, 0, shared.roundStroke.GetAddressOf())))
+            return false;
+        factory = shared.factory;
+        fonts = shared.fonts;
+        imaging = shared.imaging;
+        roundStroke = shared.roundStroke;
+        return true;
     }
     void invalidate()
     {
@@ -69,6 +86,8 @@ class NativeText
         bitmap.Reset();
         width = height = 0;
         drawing = pixelsValid = false;
+        inkTop = inkBottom = 0;
+        clearAll = true;
     }
     void clearLayouts()
     {
@@ -141,6 +160,9 @@ class NativeText
         layouts = std::move(nextLayouts);
         metrics = std::move(nextMetrics);
         fittedSizes = std::move(nextSizes);
+        widestText = 0;
+        for (const auto &m : metrics)
+            widestText = std::max(widestText, m.widthIncludingTrailingWhitespace);
         measuredSize = size;
         measuredWidth = wrapWidth;
         measuredHeight = fitHeight;
@@ -172,11 +194,14 @@ class NativeText
     {
         return i < metrics.size() ? metrics[i].widthIncludingTrailingWhitespace : 0;
     }
-    bool begin(int w, int h, float top, int amount, bool fadeEdges = true)
+    float contentWidth() const { return widestText; }
+    bool begin(int w, int h, float top, int amount, bool fadeEdges = true, int rasterWidth = 0)
     {
         if (!init())
             return false;
-        if (!target || width != w || height != h)
+        const int surfaceWidth = rasterWidth > 0 ? std::clamp(rasterWidth, 1, w) : w;
+        originX = (w - surfaceWidth) / 2;
+        if (!target || width != surfaceWidth || height != h)
         {
             target.Reset();
             bitmap.Reset();
@@ -184,7 +209,7 @@ class NativeText
             mask.Reset();
             layer.Reset();
             pixelsValid = false;
-            if (FAILED(imaging->CreateBitmap(w, h, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnLoad,
+            if (FAILED(imaging->CreateBitmap(surfaceWidth, h, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnLoad,
                                              bitmap.GetAddressOf())))
                 return false;
             auto properties = D2D1::RenderTargetProperties(
@@ -197,8 +222,9 @@ class NativeText
                 target.Reset();
                 return false;
             }
-            width = w;
+            width = surfaceWidth;
             height = h;
+            clearAll = true;
         }
         if (fadeEdges && !mask)
         {
@@ -234,7 +260,18 @@ class NativeText
         pixelsValid = false;
         drawing = true;
         target->SetTransform(D2D1::Matrix3x2F::Identity());
-        target->Clear(D2D1::ColorF(0, 0, 0, 0));
+        if (clearAll)
+            target->Clear(D2D1::ColorF(0, 0, 0, 0));
+        else if (inkBottom > inkTop)
+        {
+            target->PushAxisAlignedClip(D2D1::RectF(0, static_cast<float>(inkTop), static_cast<float>(width),
+                                                  static_cast<float>(inkBottom)), D2D1_ANTIALIAS_MODE_ALIASED);
+            target->Clear(D2D1::ColorF(0, 0, 0, 0));
+            target->PopAxisAlignedClip();
+        }
+        clearAll = false;
+        inkTop = h;
+        inkBottom = 0;
         target->SetTextAntialiasMode(amount ? D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE
                                             : D2D1_TEXT_ANTIALIAS_MODE_ALIASED);
         target->SetTextRenderingParams(rendering.Get());
@@ -244,7 +281,7 @@ class NativeText
             mask->SetStartPoint(D2D1::Point2F(0, top));
             mask->SetEndPoint(D2D1::Point2F(0, static_cast<float>(h)));
             target->PushLayer(
-                D2D1::LayerParameters(D2D1::RectF(18, top, static_cast<float>(w - 18), static_cast<float>(h)),
+                D2D1::LayerParameters(D2D1::RectF(18.0f - originX, top, static_cast<float>(w - 18 - originX), static_cast<float>(h)),
                                       nullptr, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
                                       D2D1::Matrix3x2F::Identity(), 1, mask.Get()),
                 layer.Get());
@@ -263,6 +300,12 @@ class NativeText
             x = std::round(x);
             y = std::round(y);
         }
+        x -= originX;
+        const float padding = std::max(16.0f, measuredSize * scale);
+        if (y + metrics[i].height * scale + padding < 0 || y - padding > height)
+            return;
+        inkTop = std::min(inkTop, std::clamp(static_cast<int>(std::floor(y - padding)), 0, height));
+        inkBottom = std::max(inkBottom, std::clamp(static_cast<int>(std::ceil(y + metrics[i].height * scale + padding)), 0, height));
         if (maxWidth > 0)
         {
             target->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -282,7 +325,10 @@ class NativeText
         if (!drawing)
             return;
         target->SetTransform(D2D1::Matrix3x2F::Identity());
+        x -= originX;
         auto a = D2D1::Point2F(x - barWidth / 2 + 1.5f, y), b = D2D1::Point2F(x + barWidth / 2 - 1.5f, y);
+        inkTop = std::min(inkTop, std::clamp(static_cast<int>(std::floor(y - 8)), 0, height));
+        inkBottom = std::max(inkBottom, std::clamp(static_cast<int>(std::ceil(y + 8)), 0, height));
         for (int glow = 9; glow >= 0; --glow)
         {
             float opacity = static_cast<float>((0.55 + 0.45 * breath) * (glow ? (10 - glow) * 2 / 255.0 : 1));
@@ -311,15 +357,18 @@ class NativeText
     {
         if (drawing || !pixelsValid || !bitmap)
             return false;
+        if (inkBottom <= inkTop)
+            return true;
         Com<IWICBitmapLock> lock;
-        WICRect rect{0, 0, width, height};
+        const int inkHeight = inkBottom - inkTop;
+        WICRect rect{0, inkTop, width, inkHeight};
         if (FAILED(bitmap->Lock(&rect, WICBitmapLockRead, lock.GetAddressOf())))
             return false;
         UINT stride = 0, size = 0;
         BYTE *pixels = nullptr;
         if (FAILED(lock->GetStride(&stride)) || FAILED(lock->GetDataPointer(&size, &pixels)))
             return false;
-        Gdiplus::Bitmap surface(width, height, static_cast<INT>(stride), PixelFormat32bppPARGB, pixels);
-        return g.DrawImage(&surface, 0, 0) == Gdiplus::Ok;
+        Gdiplus::Bitmap surface(width, inkHeight, static_cast<INT>(stride), PixelFormat32bppPARGB, pixels);
+        return g.DrawImage(&surface, originX, inkTop) == Gdiplus::Ok;
     }
 };

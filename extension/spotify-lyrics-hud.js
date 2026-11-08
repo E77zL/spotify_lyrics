@@ -1,4 +1,4 @@
-/* Spotify Lyrics HUD control. MIT. Integration v1.2. */
+/* Spotify Lyrics control. MIT. Integration v1.2. */
 (function () {
   'use strict';
   if (window.__spotifyLyricsHudControl) return;
@@ -114,7 +114,7 @@
     if (!window.Spicetify?.Playbar?.Button) { bootTimer = setTimeout(boot, 400); return; }
     button = new Spicetify.Playbar.Button('Desktop lyrics', icon, () => {
       if (!socket || socket.readyState !== WebSocket.OPEN) {
-        Spicetify.showNotification?.('Lyrics HUD is starting. Try again in a moment.', true);
+        Spicetify.showNotification?.('Spotify Lyrics is starting. Try again in a moment.', true);
         return;
       }
       socket.send(JSON.stringify({ type: 'setEnabled', enabled: !enabled }));

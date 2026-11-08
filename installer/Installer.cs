@@ -8,12 +8,12 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Spotify Lyrics HUD Companion Setup")]
+[assembly: AssemblyTitle("Lyrics Setup")]
 [assembly: AssemblyDescription("Native in-process Spotify lyrics overlay")]
-[assembly: AssemblyCompany("Lyrics HUD integration contributors")]
-[assembly: AssemblyProduct("Spotify Lyrics HUD Companion")]
-[assembly: AssemblyVersion("2.0.3.0")]
-[assembly: AssemblyFileVersion("2.0.3.0")]
+[assembly: AssemblyCompany("Spotify Lyrics contributors")]
+[assembly: AssemblyProduct("Spotify Lyrics")]
+[assembly: AssemblyVersion("2.1.0.0")]
+[assembly: AssemblyFileVersion("2.1.0.0")]
 
 internal static class Installer
 {
@@ -55,7 +55,7 @@ internal static class Installer
                 throw new InvalidDataException("Unsafe payload name");
             Hashes.Add(name, row.Substring(0, split));
         }
-        if (Hashes.Count != 19) throw new InvalidDataException("Unexpected payload count");
+        if (Hashes.Count != 18) throw new InvalidDataException("Unexpected payload count");
     }
     private static void CopyVerified(string name, Stream destination)
     {
@@ -88,7 +88,31 @@ internal static class Installer
     }
     internal static int RunAction(string action, Action<string> output = null, string spotifyDirectory = null)
     {
-        if (action != "Install" && action != "Uninstall" && action != "Diagnose" && action != "Verify")
+        return RunBackend(action, output, spotifyDirectory, null);
+    }
+    private static bool OptionalResource(string name)
+    {
+        return name == "spicetify-windows-x64.zip" || name == "spicetify-source-v2.46.4.tar.gz";
+    }
+    private static IEnumerable<string> ActionResources(string action)
+    {
+        // These scripts are dot-sourced even for read-only diagnosis and disabling.
+        foreach (string name in new[] { "ConsoleActions.ps1", "Bridge.ps1", "Dependency.ps1", "Marketplace.ps1" })
+            yield return name;
+        if (action == "Diagnose" || action == "Uninstall") yield break;
+        if (action == "ExportSources")
+        {
+            foreach (string name in new[] { "spicetify-release.json", "spicetify-source-v2.46.4.tar.gz", "HUD-LICENSE.txt", "SPICETIFY-LICENSE", "MARKETPLACE-LICENSE.txt", "LICENSE", "NOTICE.txt" })
+                yield return name;
+            yield break;
+        }
+        foreach (string name in Hashes.Keys)
+            if (!name.EndsWith(".ps1", StringComparison.Ordinal) && name != "README.md")
+                yield return name;
+    }
+    private static int RunBackend(string action, Action<string> output, string spotifyDirectory, string exportDirectory)
+    {
+        if (action != "Install" && action != "Uninstall" && action != "Diagnose" && action != "Verify" && action != "ExportSources")
             throw new ArgumentException("Unknown setup action.");
         if (output != null) output("Verifying and preparing the installation files…");
         string tempBase = Path.GetFullPath(Path.GetTempPath());
@@ -96,7 +120,7 @@ internal static class Installer
         Directory.CreateDirectory(temp);
         try
         {
-            foreach (string name in Hashes.Keys)
+            foreach (string name in ActionResources(action))
                 if (HasResource(name)) ExtractVerified(name, Path.Combine(temp, name));
             string powershell = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "WindowsPowerShell", "v1.0", "powershell.exe");
             if (!File.Exists(powershell)) throw new FileNotFoundException("Windows PowerShell 5.1 is required.");
@@ -105,6 +129,7 @@ internal static class Installer
             info.Arguments = "-NoLogo -NoProfile -ExecutionPolicy Bypass -File \"" + Path.Combine(temp, "ConsoleActions.ps1") + "\" -Action " + action;
             info.UseShellExecute = false;
             info.WorkingDirectory = temp;
+            if (exportDirectory != null) info.EnvironmentVariables["LYRICS_SETUP_EXPORT_PATH"] = exportDirectory;
             if (output != null)
             {
                 info.CreateNoWindow = true;
@@ -160,23 +185,20 @@ internal static class Installer
     }
     private static void Instructions()
     {
-        Console.WriteLine("Spotify Lyrics HUD Setup " + Version);
+        Console.WriteLine("Lyrics Setup " + Version);
         Console.WriteLine("Run without arguments for the graphical installer.");
         Console.WriteLine("Close Spotify, including the tray icon, before Install / Repair or Disable integration.");
         Console.WriteLine("Open Spotify after installation; the A button beside the microphone toggles desktop lyrics.");
         Console.WriteLine("Hover over lyrics for timing, typography, opacity and colors. Drag the edge to resize.");
-        Console.WriteLine("LRCLIB -> QQ Music -> NetEase fallback. The native HUD exits with Spotify.");
+        Console.WriteLine("LRCLIB -> QQ Music -> NetEase fallback. The lyrics window exits with Spotify.");
         Console.WriteLine("Standard and administrator sessions are supported. No resident launcher or updater.");
-        Console.WriteLine("Use the source icon in setup to export source and licenses.");
-        Console.WriteLine("HUD / integration: MIT; Spicetify CLI: LGPL-2.1. Upstream HUD: Fanbeixi.");
+        Console.WriteLine("Use --export-source <folder> to export third-party source and licenses. Project source is a separate Release ZIP.");
+        Console.WriteLine("Integration: MIT; Spicetify CLI: LGPL-2.1. Original project: Fanbeixi.");
     }
     internal static void ExportSources(string destination)
     {
-        Directory.CreateDirectory(destination);
-        string[] names = { "spicetify-source-v2.46.4.tar.gz", "HUD-INTEGRATION-SOURCE.zip", "HUD-LICENSE.txt", "SPICETIFY-LICENSE", "MARKETPLACE-LICENSE.txt", "LICENSE", "NOTICE.txt" };
-        foreach (string name in names)
-            if (File.Exists(Path.Combine(destination, name))) throw new IOException("File already exists: " + name);
-        foreach (string name in names) ExtractVerified(name, Path.Combine(destination, name));
+        if (RunBackend("ExportSources", Console.WriteLine, null, Path.GetFullPath(destination)) != 0)
+            throw new IOException("Source export failed; see the output above.");
     }
     [STAThread]
     public static int Main(string[] args)
@@ -200,7 +222,7 @@ internal static class Installer
                     {
                         if (!HasResource(name))
                         {
-                            if (name != "spicetify-windows-x64.zip") throw new InvalidDataException("Missing payload: " + name);
+                            if (!OptionalResource(name)) throw new InvalidDataException("Missing payload: " + name);
                             Console.WriteLine("PASS optional pinned dependency " + name);
                             continue;
                         }
@@ -214,7 +236,8 @@ internal static class Installer
                 if (args[0] == "--install") return RunAction("Install");
                 if (args[0] == "--uninstall") return RunAction("Uninstall");
                 if (args[0] == "--help") { Instructions(); return 0; }
-                Console.WriteLine("Usage: Spotify-Lyrics-HUD-Setup-v2.0.3.exe [--self-test | --diagnose | --help | --install | --uninstall]");
+                if (args[0] == "--export-source" && args.Length == 2) { ExportSources(args[1]); return 0; }
+                Console.WriteLine("Usage: Spotify-Lyrics-Setup-v2.1.0.exe [--self-test | --diagnose | --help | --install | --uninstall | --export-source <folder>]");
                 return 2;
             }
             return 2;

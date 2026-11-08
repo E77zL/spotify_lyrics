@@ -1,37 +1,44 @@
-﻿# MIT. Only a first installation without an existing CLI needs this download.
-function Get-SpicetifyArchive([string]$Directory) {
+# MIT. Fetch only missing, pinned dependencies; never check for updates.
+function Get-SpicetifyArchive([string]$Directory, [switch]$Source) {
     $release = Get-Content -LiteralPath (Join-Path $Directory 'spicetify-release.json') -Raw | ConvertFrom-Json
-    $archive = Join-Path $Directory 'spicetify-windows-x64.zip'
+    if ($release.version -notmatch '^v\d+\.\d+\.\d+$') { throw 'Invalid pinned Spicetify release.' }
+    $name = 'spicetify-windows-x64.zip'
+    $url = $release.url
+    $hash = $release.sha256
+    $expectedUrl = "https://github.com/spicetify/cli/releases/download/$($release.version)/$($release.name)"
+    if ($Source) {
+        $name = "spicetify-source-$($release.version).tar.gz"
+        $url = $release.sourceUrl
+        $hash = $release.sourceSha256
+        $expectedUrl = "https://codeload.github.com/spicetify/cli/legacy.tar.gz/refs/tags/$($release.version)"
+    } elseif ($release.name -notmatch '^spicetify-[\d.]+-windows-x64\.zip$') {
+        throw 'Invalid pinned Spicetify release.'
+    }
+    if ($url -cne $expectedUrl -or $hash -notmatch '^[a-f0-9]{64}$') { throw 'Invalid pinned Spicetify release.' }
+    $archive = Join-Path $Directory $name
     if (!(Test-Path -LiteralPath $archive)) {
-        $expectedUrl = "https://github.com/spicetify/cli/releases/download/$($release.version)/$($release.name)"
-        if ($release.url -cne $expectedUrl -or $release.version -notmatch '^v\d+\.\d+\.\d+$' -or
-            $release.name -notmatch '^spicetify-[\d.]+-windows-x64\.zip$' -or $release.sha256 -notmatch '^[a-f0-9]{64}$') {
-            throw 'Invalid pinned Spicetify release.'
-        }
-        Write-Host "  首次安装：下载固定版本 Spicetify $($release.version)，完成后校验 SHA256。" -ForegroundColor DarkGray
+        Write-Host "  Downloading pinned Spicetify $($release.version): $name (SHA256 verified)." -ForegroundColor DarkGray
         $temporary = $archive + '.' + [Guid]::NewGuid().ToString('N') + '.download'
         $previousTls = [Net.ServicePointManager]::SecurityProtocol
         try {
             [Net.ServicePointManager]::SecurityProtocol = $previousTls -bor [Net.SecurityProtocolType]::Tls12
-            $download = @{ UseBasicParsing=$true; Uri=$release.url; OutFile=$temporary; TimeoutSec=120 }
+            $download = @{ UseBasicParsing=$true; Uri=$url; OutFile=$temporary; TimeoutSec=120 }
             # Windows PowerShell does not read HTTPS_PROXY automatically.
             $proxy = $env:HTTPS_PROXY
             if (!$proxy) { $proxy = $env:HTTP_PROXY }
             if ($proxy) { $download.Proxy = $proxy }
             Invoke-WebRequest @download
-            if ((Get-FileHash -LiteralPath $temporary -Algorithm SHA256).Hash -ne $release.sha256) {
-                throw 'Spicetify SHA256 校验失败，未安装下载文件。'
+            if ((Get-FileHash -LiteralPath $temporary -Algorithm SHA256).Hash -ne $hash) {
+                throw 'Spicetify SHA256 mismatch; download was not installed.'
             }
             Move-Item -LiteralPath $temporary -Destination $archive
         } catch {
-            throw ("Spicetify 下载失败，可检查网络或使用 Offline 离线安装包。" + $_.Exception.Message)
+            throw ("Spicetify download failed. Check the network or use the Offline installer. " + $_.Exception.Message)
         } finally {
             [Net.ServicePointManager]::SecurityProtocol = $previousTls
             if (Test-Path -LiteralPath $temporary) { Remove-Item -LiteralPath $temporary -Force }
         }
     }
-    if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ne $release.sha256) {
-        throw 'Spicetify SHA256 校验失败。'
-    }
+    if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ne $hash) { throw 'Spicetify SHA256 mismatch.' }
     return $archive
 }

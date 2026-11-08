@@ -25,7 +25,7 @@ $archiver=Join-Path $build '7zip/package/win/x64/7za.exe'
 & (Join-Path $root 'scripts/Bundle-Marketplace.ps1') -CacheDir $CacheDir -Archiver $archiver
 & node (Join-Path $root 'scripts/Bundle-Native.cjs')
 if($LASTEXITCODE -ne 0){throw 'Provider bundle failed.'}
-foreach($test in @('matching','providers','native-renderer','seek-sync')){
+foreach($test in @('cache','matching','providers','native-renderer','seek-sync')){
     & node (Join-Path $root ('tests/'+$test+'.cjs'))
     if($LASTEXITCODE -ne 0){throw ('Regression failed: '+$test)}
 }
@@ -46,4 +46,9 @@ foreach($name in @('README.md','NOTICE.txt','LICENSE')){Copy-Item -LiteralPath (
 foreach($name in @('spicetify-windows-x64.zip','spicetify-source-v2.46.4.tar.gz')){Copy-Item -LiteralPath (Join-Path $CacheDir $name) -Destination $payload -Force}
 foreach($name in @('ConsoleActions.ps1','Bridge.ps1','Dependency.ps1')){ $file=Join-Path $payload $name;[IO.File]::WriteAllText($file,[IO.File]::ReadAllText($file),(New-Object Text.UTF8Encoding($true))) }
 & (Join-Path $root 'scripts/Pack-Installer.ps1') -Offline:$Offline
+if ($Offline) {
+    # Run reflection/EXE checks in a separate host so assemblies do not lock later builds.
+    & (Get-Process -Id $PID).Path -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'tests/installer-package.ps1') -Standard (Join-Path $dist "Spotify-Lyrics-Setup-v$version.exe") -Offline (Join-Path $dist "Spotify-Lyrics-Setup-v$version-Offline.exe")
+    if ($LASTEXITCODE -ne 0) { throw 'Packaged installer regression failed.' }
+}
 Write-Host ("Native $version build complete: "+$dist) -ForegroundColor Green

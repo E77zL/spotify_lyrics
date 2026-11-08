@@ -17,7 +17,7 @@ function patch(source){
   'else if(Wg(g.installedExtensions,[]).length||wh.getItem(g.themeInstalled))window.navigator.onLine?');
  new vm.Script(source,{filename:'marketplace-extension.js'});
  return '// Marketplace 1.0.12, MIT: CharlieS1103 + theRealPadster.\n'+
-  '// HUD integration: on-demand catalog; no global session cache reset or idle CDN probe.\n'+source;
+  '// Spotify Lyrics integration: on-demand catalog; no global session cache reset or idle CDN probe.\n'+source;
 }
 module.exports={patch};
 if(require.main===module){

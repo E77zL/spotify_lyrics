@@ -1,4 +1,4 @@
-param([string]$Payload)
+param([string]$Payload, [string]$LegacyPayload)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot '../installer/Bridge.ps1')
 $fixture = Join-Path (Split-Path $Payload) ('install-qa-' + [Guid]::NewGuid().ToString('N'))
@@ -8,6 +8,10 @@ New-Item -ItemType Directory -Path $spotify,$runtime,(Join-Path $spotify 'Lyrics
 $module = Join-Path $spotify 'version.dll'
 $offsets = Join-Path $spotify 'LyricsHUD/lyric-offsets.json'
 [IO.File]::WriteAllText($offsets,'{"keep":-500}')
+if ($LegacyPayload) {
+    Copy-Item -LiteralPath $LegacyPayload -Destination $module
+    if (!(Test-LyricsBridgeOwned $module $runtime)) { throw 'Legacy bridge metadata was not recognized.' }
+}
 Install-LyricsBridge $spotify $runtime $Payload
 if (!(Test-LyricsBridgeOwned $module $runtime)) { throw 'Fresh install ownership missing' }
 $hash = (Get-FileHash -LiteralPath $module).Hash

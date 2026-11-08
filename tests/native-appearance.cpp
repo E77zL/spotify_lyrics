@@ -51,6 +51,25 @@ static size_t Edges(const std::vector<BYTE> &pixels)
             ++count;
     return count;
 }
+static std::vector<BYTE> Scene(NativeText &text, float center, float scale, bool cropped, bool fade)
+{
+    constexpr int w = 1200, h = 300;
+    Bitmap bitmap(w, h, PixelFormat32bppPARGB);
+    {
+        Graphics g(&bitmap);
+        g.Clear(Color(0, 0, 0, 0));
+        assert(text.begin(w, h, 32, 50, fade, cropped ? 500 : 0));
+        text.draw(0, (w - text.layoutWidth(0) * scale) / 2, center, scale, Color(245, 245, 245, 240));
+        text.underline(w / 2, center + text.textHeight(0) * scale / 2 + 4, 36, 0.5);
+        assert(text.composite(g));
+    }
+    BitmapData bits{};
+    Rect rect(0, 0, w, h);
+    assert(bitmap.LockBits(&rect, ImageLockModeRead, PixelFormat32bppPARGB, &bits) == Ok);
+    std::vector<BYTE> pixels(static_cast<BYTE *>(bits.Scan0), static_cast<BYTE *>(bits.Scan0) + w * h * 4);
+    bitmap.UnlockBits(&bits);
+    return pixels;
+}
 int wmain()
 {
     assert(SUCCEEDED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED)));
@@ -75,6 +94,21 @@ int wmain()
         assert(Render(renderer, 50) == balanced);
         assert(Render(renderer, 50, 420, 24.1f) != Render(renderer, 50, 420, 24.4f));
         assert(Render(renderer, 50, 800).size() == 800 * 160 * 4);
+        // A reused, cropped raster must match a newly cleared full-size raster,
+        // including scrolling, zooming, glow and both viewport fade boundaries.
+        for (bool fade : {false, true})
+        {
+            NativeText cropped;
+            assert(cropped.prepare({L"Smooth moving lyrics"}, 26, 1152));
+            for (float center : {150.0f, 151.25f, 60.5f, -50.0f, 330.0f, 140.0f})
+                for (float scale : {1.0f, 0.68f, 0.873f})
+                {
+                    NativeText fresh;
+                    assert(fresh.prepare({L"Smooth moving lyrics"}, 26, 1152));
+                    assert(Scene(cropped, center, scale, true, fade) == Scene(fresh, center, scale, false, fade));
+                    assert(cropped.surfaceBytes() == 500 * 300 * 4);
+                }
+        }
         renderer.invalidate();
         assert(renderer.prepare({L"i"}, 14));
         assert(renderer.textWidth(0) < 15);

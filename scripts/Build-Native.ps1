@@ -39,4 +39,4 @@ $batch+="`r`nexit /b 0`r`n"
 $file=Join-Path $OutputDir 'compile-native.cmd'
 [IO.File]::WriteAllText($file,$batch,(New-Object Text.UTF8Encoding($false)))
 & $env:ComSpec /d /c $file
-if($LASTEXITCODE -ne 0){throw 'Native HUD compilation failed.'}
+if($LASTEXITCODE -ne 0){throw 'Spotify Lyrics native compilation failed.'}

@@ -144,6 +144,7 @@ struct RequestJob
     }
 };
 constexpr UINT HudMessage = WM_APP + 91;
+constexpr UINT HudHealth = WM_APP + 94;
 struct Connection
 {
     SOCKET socket = INVALID_SOCKET;

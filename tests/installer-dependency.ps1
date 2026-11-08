@@ -18,12 +18,26 @@ try {
     $release = @{ version='v2.46.4'; name='spicetify-2.46.4-windows-x64.zip';
         url='https://github.com/spicetify/cli/releases/download/v2.46.4/spicetify-2.46.4-windows-x64.zip';
         sha256=(Get-FileHash -LiteralPath $archive).Hash.ToLowerInvariant() }
+    $release.sourceUrl = 'https://codeload.github.com/spicetify/cli/legacy.tar.gz/refs/tags/v2.46.4'
+    $release.sourceSha256 = $release.sha256
     $release | ConvertTo-Json | Set-Content -LiteralPath $metadata
     Get-SpicetifyArchive $fixture | Out-Null
     if ($downloadCount -ne 0) { throw 'Bundled dependency should not download.' }
     Remove-Item -LiteralPath $archive
     Get-SpicetifyArchive $fixture | Out-Null
     if ($downloadCount -ne 1) { throw 'Missing dependency should download once.' }
+    $source = Get-SpicetifyArchive $fixture -Source
+    if ($downloadCount -ne 2 -or [IO.Path]::GetFileName($source) -ne 'spicetify-source-v2.46.4.tar.gz') { throw 'Missing source should use its pinned archive.' }
+    Get-SpicetifyArchive $fixture -Source | Out-Null
+    if ($downloadCount -ne 2) { throw 'Bundled source must work offline.' }
+    [IO.File]::WriteAllText($source, 'corrupt source')
+    try { Get-SpicetifyArchive $fixture -Source; throw 'Expected source checksum rejection' }
+    catch { if ($_.Exception.Message -notmatch 'SHA256') { throw } }
+    Remove-Item -LiteralPath $source
+    $release.sourceUrl = 'https://example.com/source.tar.gz'
+    $release | ConvertTo-Json | Set-Content -LiteralPath $metadata
+    try { Get-SpicetifyArchive $fixture -Source; throw 'Expected source URL rejection' }
+    catch { if ($_.Exception.Message -notmatch 'Invalid pinned') { throw } }
     [IO.File]::WriteAllText($archive, 'corrupt')
     try { Get-SpicetifyArchive $fixture; throw 'Expected checksum rejection' }
     catch { if ($_.Exception.Message -notmatch 'SHA256') { throw } }

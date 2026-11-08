@@ -1,6 +1,6 @@
 {
-  "name": "spotify-lyrics-hud-companion-source",
-  "version": "2.0.3",
+  "name": "spotify-lyrics-source",
+  "version": "2.1.0",
   "private": true,
   "license": "MIT",
   "scripts": {

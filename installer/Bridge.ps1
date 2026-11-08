@@ -7,7 +7,7 @@ function Test-LyricsBridgeOwned([string]$File, [string]$InstallRoot) {
         if ($state.module -eq [IO.Path]::GetFullPath($File) -and $state.sha256 -eq (Get-FileHash -LiteralPath $File -Algorithm SHA256).Hash) { return $true }
     } catch { }
     $info = (Get-Item -LiteralPath $File).VersionInfo
-    return $info.InternalName -eq 'SpotifyLyricsBridge' -and $info.ProductName -eq 'Spotify Lyrics Better HUD'
+    return $info.InternalName -eq 'SpotifyLyricsBridge' -and $info.ProductName -in @('Spotify Lyrics','Spotify Lyrics Better HUD')
 }
 
 function Set-LyricsBridgeFile([string]$File, [byte[]]$Content) {
@@ -29,7 +29,7 @@ function Install-LyricsBridge([string]$SpotifyRoot, [string]$InstallRoot, [strin
     $settings = Join-Path $SpotifyRoot 'LyricsHUD'
     $config = Join-Path $settings 'bridge.ini'
     $info = (Get-Item -LiteralPath $Payload).VersionInfo
-    if ($info.InternalName -ne 'SpotifyLyricsBridge' -or $info.ProductName -ne 'Spotify Lyrics Better HUD') { throw 'Invalid Spotify process bridge payload.' }
+    if ($info.InternalName -ne 'SpotifyLyricsBridge' -or $info.ProductName -notin @('Spotify Lyrics','Spotify Lyrics Better HUD')) { throw 'Invalid Spotify process bridge payload.' }
     New-Item -ItemType Directory -Path $settings,$InstallRoot -Force | Out-Null
     $state = @{ version = $info.ProductVersion; module = [IO.Path]::GetFullPath($module); sha256 = (Get-FileHash -LiteralPath $Payload -Algorithm SHA256).Hash }
     $changes = @(
@@ -74,5 +74,5 @@ function Remove-LyricsBridge([string]$SpotifyRoot, [string]$InstallRoot) {
     if (Test-Path -LiteralPath $config) { Remove-Item -LiteralPath $config -Force }
     $state = Join-Path $InstallRoot 'bridge-install.json'
     if (Test-Path -LiteralPath $state) { Remove-Item -LiteralPath $state -Force }
-    # Deliberately retain per-track lyric-offsets.json and the user's HUD settings.
+    # Deliberately retain per-track lyric-offsets.json and the user's lyrics settings.
 }

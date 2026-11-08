@@ -39,7 +39,7 @@ static Json ProviderRequest(const Json &args, const std::shared_ptr<RequestJob> 
     auto body = args.value("body", std::string());
     if (body.size() > 65536)
         throw std::runtime_error("Request too large");
-    const auto agent = L"SpotifyLyricsHUD/" + Wide(HudVersion);
+    const auto agent = L"SpotifyLyrics/" + Wide(HudVersion);
     Internet session(WinHttpOpen(agent.c_str(), WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY, WINHTTP_NO_PROXY_NAME,
                                  WINHTTP_NO_PROXY_BYPASS, 0));
     const int timeout = std::clamp(args.value("timeout", 8000), 500, 8000);
@@ -206,6 +206,10 @@ void NativeServer::handle(const std::shared_ptr<Connection> &c)
         }
         if (first == "GET /health HTTP/1.1" && fields["x-hud-token"] == token)
         {
+            // Read window state on its owning thread, only when diagnostics ask.
+            // Bound the wait so a stalled UI cannot hold this worker indefinitely.
+            DWORD_PTR refreshed = 0;
+            SendMessageTimeoutW(hwnd, HudHealth, 0, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK, 1000, &refreshed);
             std::string data;
             {
                 std::lock_guard<std::mutex> lock(healthMutex);
@@ -232,7 +236,7 @@ void NativeServer::handle(const std::shared_ptr<Connection> &c)
                 clients.push_back(c);
             }
             if (!post({{"type", "connected"}}))
-                throw std::runtime_error("HUD window unavailable");
+                throw std::runtime_error("Spotify Lyrics window unavailable");
             while (c->open)
             {
                 unsigned char base[2];

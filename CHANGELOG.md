@@ -1,3 +1,26 @@
+## 2.1.0
+
+- Use Spotify Lyrics consistently in product metadata, installer copy, package filenames and runtime messages. Recognize both old and new bridge names on upgrade; retain stable settings paths and upstream attribution.
+- Make English the default README, with a Chinese language link. Preserve the latest user-edited GitHub content and include both languages in the source archive.
+- Remove duplicate project sources from the installers; ship the full source as a separate ZIP. The standard installer fetches pinned Spicetify source only for a missing dependency or explicit source export; the offline installer embeds it. Distribute corresponding source beside both installers and verify SHA256 before use.
+- Extract only scripts for diagnosis and disabling; avoid unpacking native binaries, Marketplace and source archives for these actions. Cache installer license text and append log batches instead of rebuilding the entire log on every refresh.
+- Share DirectWrite/Direct2D factories between lyric and settings renderers. Crop centered lyric rasters and composite only occupied text rows, preserving the same pixels, smooth scrolling, glow, transparency and rounded corners.
+- Reduce hidden frame-clock wakeups from four per second to one; controls still wake immediately and foreground fullscreen checks retain their visible cadence.
+- Refresh diagnostics on demand on the window thread, with a bounded wait. Avoid periodic JSON serialization while preserving current playback timestamps and surface-allocation reports.
+- Cap lyric cache by entry count and estimated storage; refresh recency on reads and play oversized provider results without retaining them.
+
+## 2.0.5
+
+- Incorporate the edited installer copy and use UI terminology in displayed text, logs and release filenames. Retain original upstream references, licenses and stable integration identifiers.
+- Start new setup sessions in English. Use Lyrics Setup as the window title and a compact 32-pixel title bar showing only the current version.
+- Include assets and preview images in the complete source archive for manual GitHub uploads.
+
+## 2.0.4
+
+- Simplify the setup title bar to text only. Replace the footer controls with the GitHub mark, an English/Chinese language switch and an open-book quick guide.
+- Switch installer pages, dialogs, button labels and tooltips between English and Chinese without losing consent, selected action, folder, logs or progress. Preserve original license texts and raw diagnostic output.
+- Move editable interface copy into `installer/SetupStrings.xml`; keep source/license export available through `--export-source <folder>` after removing its toolbar button.
+
 ## 2.0.3
 
 - Replace the console menu with a compact dark WPF installer: license page, operation selection, asynchronous progress/logs, retry and source export. Keep the verified payload, administrator support and single-file packaging; no browser runtime is bundled.

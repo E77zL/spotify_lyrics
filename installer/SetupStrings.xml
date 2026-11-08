@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Edit en/zh text only. Preserve keys, targets, properties and XML escaping. -->
+<strings>
+  <string key="window.title">
+    <en>Lyrics Setup</en>
+    <zh>Lyrics Setup</zh>
+  </string>
+  <string key="window.minimize" target="Minimize" property="ToolTip">
+    <en>Minimize</en>
+    <zh>最小化</zh>
+  </string>
+  <string key="window.close" target="CloseWindow" property="ToolTip">
+    <en>Close</en>
+    <zh>关闭</zh>
+  </string>
+  <string key="version.offline">
+    <en>OFFLINE</en>
+    <zh>离线版</zh>
+  </string>
+  <string key="license.title">
+    <en>License Agreement</en>
+    <zh>许可协议</zh>
+  </string>
+  <string key="license.description">
+    <en>A little credit to the people who made this possible.</en>
+    <zh>感谢每一位让这个项目成为可能的贡献者。</zh>
+  </string>
+  <string key="license.accept" target="AcceptLicense" property="Content">
+    <en>I accept the license agreement.</en>
+    <zh>我接受许可协议。</zh>
+  </string>
+  <string key="license.upstream">
+    <en>ORIGINAL PROJECT — FANBEIXI</en>
+    <zh>原作者项目 — FANBEIXI</zh>
+  </string>
+  <string key="license.components.title">
+    <en>THIRD-PARTY COMPONENTS</en>
+    <zh>第三方组件</zh>
+  </string>
+  <string key="license.components.body">
+    <en>Spicetify CLI: LGPL-2.1. Spicetify Marketplace: MIT. Full notices are included. Use --export-source &lt;folder&gt; to export third-party source and licenses (downloaded on demand in the standard installer; embedded offline). Project source is a separate Release ZIP. This is an independent derivative project, not an official Spotify product.</en>
+    <zh>Spicetify CLI：LGPL-2.1。Spicetify Marketplace：MIT。完整许可已包含，可用 --export-source &lt;目录&gt; 导出第三方源码及许可（标准版按需下载，离线版内置）；项目源码以独立 Release ZIP 提供。本项目为独立维护的衍生项目，并非 Spotify 官方产品。</zh>
+  </string>
+  <string key="options.title">
+    <en>Make yourself at home</en>
+    <zh>准备开始</zh>
+  </string>
+  <string key="options.description">
+    <en>Choose what you would like to do.</en>
+    <zh>选择你想执行的操作。</zh>
+  </string>
+  <string key="action.install.title" target="InstallTitle" property="Text">
+    <en>Install / Repair</en>
+    <zh>安装 / 修复</zh>
+  </string>
+  <string key="action.install.description" target="InstallDescription" property="Text">
+    <en>Desktop lyrics, the Spotify Marketplace.</en>
+    <zh>桌面歌词、Spotify内扩展商店。</zh>
+  </string>
+  <string key="action.disable.title" target="DisableTitle" property="Text">
+    <en>Disable integration</en>
+    <zh>停用集成</zh>
+  </string>
+  <string key="action.disable.description" target="DisableDescription" property="Text">
+    <en>Remove the lyrics integration. Keep your settings and other extensions.</en>
+    <zh>停用歌词集成，保留个人设置和其他扩展。</zh>
+  </string>
+  <string key="action.check.title" target="DiagnoseTitle" property="Text">
+    <en>Check environment</en>
+    <zh>检查环境</zh>
+  </string>
+  <string key="action.check.description" target="DiagnoseDescription" property="Text">
+    <en>Inspect your installation without changing anything.</en>
+    <zh>检查当前安装，不修改任何内容。</zh>
+  </string>
+  <string key="folder.label" target="FolderLabel" property="Text">
+    <en>Spotify desktop · Windows 10 / 11</en>
+    <zh>Spotify 桌面版 · Windows 10 / 11</zh>
+  </string>
+  <string key="button.browse" target="BrowseSpotify" property="Content">
+    <en>Spotify folder…</en>
+    <zh>Spotify 目录…</zh>
+  </string>
+  <string key="button.back" target="Back" property="Content">
+    <en>Back</en>
+    <zh>返回</zh>
+  </string>
+  <string key="button.next">
+    <en>Next</en>
+    <zh>下一步</zh>
+  </string>
+  <string key="button.install">
+    <en>Install</en>
+    <zh>安装</zh>
+  </string>
+  <string key="button.disable">
+    <en>Disable</en>
+    <zh>停用</zh>
+  </string>
+  <string key="button.check">
+    <en>Check</en>
+    <zh>检查</zh>
+  </string>
+  <string key="button.finish">
+    <en>Finish</en>
+    <zh>完成</zh>
+  </string>
+  <string key="button.retry">
+    <en>Retry</en>
+    <zh>重试</zh>
+  </string>
+  <string key="button.done">
+    <en>Done</en>
+    <zh>完成</zh>
+  </string>
+  <string key="link.github" target="ProjectLink" property="ToolTip">
+    <en>Project on GitHub</en>
+    <zh>在 GitHub 查看项目</zh>
+  </string>
+  <string key="link.language" target="Language" property="ToolTip">
+    <en>切换为中文</en>
+    <zh>Switch to English</zh>
+  </string>
+  <string key="link.guide" target="Help" property="ToolTip">
+    <en>Quick guide</en>
+    <zh>快速指南</zh>
+  </string>
+  <string key="guide.title">
+    <en>Quick guide</en>
+    <zh>快速指南</zh>
+  </string>
+  <string key="guide.description">
+    <en>Everything you need to get started.</en>
+    <zh>开始使用之前，你需要了解的几件事。</zh>
+  </string>
+  <string key="guide.counter">
+    <en>GUIDE</en>
+    <zh>指南</zh>
+  </string>
+  <string key="guide.install.title" target="GuideInstallTitle" property="Text">
+    <en>01   Install, then open Spotify</en>
+    <zh>01   安装后打开 Spotify</zh>
+  </string>
+  <string key="guide.install.body" target="GuideInstallBody" property="Text">
+    <en>Choose Install / Repair after closing Spotify, including its tray icon. Both standard and administrator sessions are supported.</en>
+    <zh>退出 Spotify（包括托盘图标）后，选择“安装 / 修复”。普通权限和管理员权限均支持。</zh>
+  </string>
+  <string key="guide.lyrics.title" target="GuideLyricsTitle" property="Text">
+    <en>02   Your lyrics, one click away</en>
+    <zh>02   一键打开桌面歌词</zh>
+  </string>
+  <string key="guide.lyrics.body" target="GuideLyricsBody" property="Text">
+    <en>Use the A button to the left of Spotify's microphone. Hover over the lyrics for timing, type, opacity and color controls. Drag to move; resize from the edge.</en>
+    <zh>点击 Spotify 麦克风左侧的 A 按钮。鼠标移到歌词上方可调节校时、字体、透明度和颜色；拖动以移动，从边缘调整大小。</zh>
+  </string>
+  <string key="guide.session.title" target="GuideSessionTitle" property="Text">
+    <en>03   Built into your Spotify session</en>
+    <zh>03   随 Spotify 一起运行</zh>
+  </string>
+  <string key="guide.session.body" target="GuideSessionBody" property="Text">
+    <en>Spotify Lyrics starts and exits with Spotify. LRCLIB → QQ Music → NetEase fallback. Run Install / Repair again if a Spotify update removes the integration.</en>
+    <zh>Spotify Lyrics 随 Spotify 启动和退出。歌词按 LRCLIB → QQ 音乐 → 网易云音乐依次查找。Spotify 更新后若集成失效，请重新运行“安装 / 修复”。</zh>
+  </string>
+  <string key="dialog.projectError">
+    <en>Could not open project</en>
+    <zh>无法打开项目</zh>
+  </string>
+  <string key="dialog.selectSpotify">
+    <en>Select your Spotify desktop application</en>
+    <zh>选择 Spotify 桌面应用</zh>
+  </string>
+  <string key="dialog.spotifyFilter">
+    <en>Spotify desktop|Spotify.exe</en>
+    <zh>Spotify 桌面版|Spotify.exe</zh>
+  </string>
+  <string key="working.install.title">
+    <en>A better view of your music</en>
+    <zh>让音乐更好看</zh>
+  </string>
+  <string key="working.check.title">
+    <en>Checking your setup</en>
+    <zh>正在检查环境</zh>
+  </string>
+  <string key="working.disable.title">
+    <en>Disabling integration</en>
+    <zh>正在停用集成</zh>
+  </string>
+  <string key="working.description">
+    <en>Please keep this window open until setup finishes.</en>
+    <zh>请保持此窗口打开，直到操作完成。</zh>
+  </string>
+  <string key="working.check.status">
+    <en>Inspecting Spotify and installed components…</en>
+    <zh>正在检查 Spotify 和已安装组件…</zh>
+  </string>
+  <string key="working.change.status">
+    <en>Verifying files and applying your changes…</en>
+    <zh>正在校验文件并应用更改…</zh>
+  </string>
+  <string key="cleanup.hint" target="CleanupLabel" property="Text">
+    <en>Setup removes its temporary files when it finishes.</en>
+    <zh>操作完成后，安装器会清理临时文件。</zh>
+  </string>
+  <string key="success.install.title">
+    <en>You're all set</en>
+    <zh>准备就绪</zh>
+  </string>
+  <string key="success.check.title">
+    <en>Environment checked</en>
+    <zh>环境检查完成</zh>
+  </string>
+  <string key="success.disable.title">
+    <en>Integration disabled</en>
+    <zh>已停用集成</zh>
+  </string>
+  <string key="success.install.description">
+    <en>Your next song deserves a better view.</en>
+    <zh>下一首歌，换一种方式欣赏。</zh>
+  </string>
+  <string key="success.kept.description">
+    <en>Your personal settings are kept.</en>
+    <zh>你的个人设置已保留。</zh>
+  </string>
+  <string key="success.install.status">
+    <en>Open Spotify, then use the A button beside the microphone to show your lyrics.</en>
+    <zh>打开 Spotify，点击麦克风旁的 A 按钮即可显示歌词。</zh>
+  </string>
+  <string key="success.check.status">
+    <en>The results are shown below. No installation files were changed.</en>
+    <zh>检查结果如下，未修改任何安装文件。</zh>
+  </string>
+  <string key="success.disable.status">
+    <en>The lyrics integration and A button are disabled.</en>
+    <zh>歌词集成和 A 按钮已停用。</zh>
+  </string>
+  <string key="error.title">
+    <en>Let's get this sorted</en>
+    <zh>操作未完成</zh>
+  </string>
+  <string key="error.description">
+    <en>Setup could not complete. Review the details, then retry.</en>
+    <zh>请查看详细信息，处理后重试。</zh>
+  </string>
+  <string key="error.status">
+    <en>The operation did not finish. Check the log below for details.</en>
+    <zh>操作未完成，请查看下方日志了解详情。</zh>
+  </string>
+</strings>

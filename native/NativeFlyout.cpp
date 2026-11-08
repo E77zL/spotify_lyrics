@@ -287,7 +287,7 @@ void NativeFlyout::paint()
     Bitmap surface(rasterWidth, rasterHeight, rasterWidth * 4, PixelFormat32bppPARGB,
                    static_cast<BYTE *>(pixels));
     Graphics g(&surface);
-    // Match the HUD: fill once, then apply the cached smooth edge.
+    // Match the lyrics window: fill once, then apply the cached smooth edge.
     g.Clear(InteractiveTint(GlassTint(current.background, current.opacity)));
     g.SetSmoothingMode(SmoothingModeAntiAlias);
     HudDrawing::Rounded(g, RectF(0.5f, 0.5f, rasterWidth - 1.0f, rasterHeight - 1.0f), px(14) - 0.5f,

@@ -1,6 +1,6 @@
 # Spotify Lyrics
 
-[简体中文](README.md) · **English**
+[简体中文](README.zh-CN.md) · **English**
 
 [Download the latest release](https://github.com/E77zL/spotify_lyrics/releases/latest) · [Original project](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)
 

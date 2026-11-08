@@ -3,7 +3,7 @@
 const fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..');
 let modules='';
-for(const name of ['lrc','matching','qqmusic','netease','lyrics']){
+for(const name of ['lrc','matching','qqmusic','netease','lyrics','cache']){
  let source=fs.readFileSync(path.join(root,'app/src',name+'.js'),'utf8');
  if(name==='qqmusic')source=source.replace("const crypto = require('crypto');",'').replace(/crypto\.createHash\('md5'\)\.update\(([^\n]+)\)\.digest\('hex'\)/,"await __nativeRequest('md5', $1)");
  modules+=JSON.stringify('./'+name)+': function(module,exports,require){\n'+source+'\n},\n';
@@ -17,11 +17,11 @@ const runtime=`
   const loaded = {};
   function require(name) { if (!loaded[name]) { const module={exports:{}}; modules[name](module,module.exports,require); loaded[name]=module; } return loaded[name].exports; }
   let serial=0, pending=new Map(), lookup=null, lookupKey='', completeKey='';
-  const cache=new Map();
+  const cache=new (require('./cache').LyricCache)();
   function __nativeRequest(op,args,signal,timeout=10000) {
     signal?.throwIfAborted();
     return new Promise((resolve,reject) => {
-      if(!socket || socket.readyState!==WebSocket.OPEN) {reject(Error('HUD disconnected'));return;}
+      if(!socket || socket.readyState!==WebSocket.OPEN) {reject(Error('Spotify Lyrics disconnected'));return;}
       const id=++serial;
       const finish=(error,result)=>{ const entry=pending.get(id); if(!entry)return; pending.delete(id);clearTimeout(entry.timer);signal?.removeEventListener('abort',entry.abort);error?reject(error):resolve(result); };
       const cancel=()=>{if(socket?.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'cancel',id}));};
@@ -33,7 +33,7 @@ const runtime=`
   }
   function resetLookup() {
     lookup?.abort(); lookup=null;lookupKey='';completeKey='';
-    for(const entry of [...pending.values()])entry.finish(Error('HUD disconnected'));
+    for(const entry of [...pending.values()])entry.finish(Error('Spotify Lyrics disconnected'));
   }
   function lookupLyrics(snapshot) {
     if(!snapshot.found) {lookup?.abort();lookup=null;lookupKey='';completeKey='';return;}
@@ -41,9 +41,9 @@ const runtime=`
     if(key===lookupKey||key===completeKey)return;
     lookup?.abort();const controller=new AbortController();lookup=controller;lookupKey=key;completeKey='';
     const publish=result=>{if(controller.signal.aborted||lookupKey!==key||!socket||socket.readyState!==WebSocket.OPEN)return;socket.send(JSON.stringify({type:'lyrics',key,...result}));completeKey=key;};
-    if(cache.has(key)){publish(cache.get(key));return;}
+    const cached=cache.get(key);if(cached){publish(cached);return;}
     require('./lyrics').fetchLyrics(snapshot.title,snapshot.artist,snapshot.durationSec,controller.signal).then(result=>{
-      if(controller.signal.aborted)return;cache.delete(key);cache.set(key,result);while(cache.size>8)cache.delete(cache.keys().next().value);publish(result);
+      if(controller.signal.aborted)return;cache.set(key,result);publish(result);
     }).catch(()=>{if(!controller.signal.aborted){lookupKey='';}});
   }
 `;

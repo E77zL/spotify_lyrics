@@ -6,7 +6,7 @@ const { fetchNetEase } = require('./netease');
 const { fetchJSON } = require('./http');
 const { cleanTitle, rankCandidates } = require('./matching');
 
-const HEADERS = { 'User-Agent': 'spotify-lyrics-hud/5.1.0 (https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)' };
+const HEADERS = { 'User-Agent': 'SpotifyLyrics (https://github.com/E77zL/spotify_lyrics)' };
 function syncedLines(text) { return parseLRC(text).filter(line => !isMetadataLine(line.text)); }
 function matchedRecords(records, title, artist, duration) {
   return rankCandidates(records.filter(Boolean).map(item => ({

@@ -1,4 +1,4 @@
-// MIT. Shared typography and vector icons for the HUD and settings.
+// MIT. Shared typography and vector icons for lyrics and settings.
 #pragma once
 #ifndef NOMINMAX
 #define NOMINMAX
