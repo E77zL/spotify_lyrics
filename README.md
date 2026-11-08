@@ -2,11 +2,16 @@
 
 **简体中文** · [English](README.en.md)
 
-基于 **[Fanbeixi / spotify-lyrics-HUD_CN](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)** 的衍生项目  
-在原作者基础上添加Spotify启动联动、图标摁钮开关、更好的UI和逐曲校时  
-完整署名见 [学分](CREDITS.md)  
-
 [下载最新构建版](https://github.com/E77zL/spotify_lyrics/releases/latest) · [原作者项目](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)
+
+## 安装和使用
+
+双击[exe](https://github.com/E77zL/spotify_lyrics/releases/latest)打开安装器接受许可后选择安装卸载或修复  
+UI右下角麦克风左侧的图标为开关浮窗摁钮  
+Spotify左上角的购物车可以浏览Spicetify主题、扩展和CSS小组件  
+歌词窗口可拖动大小，鼠标抓住窗口右下角落缩放  
+在全屏游戏时鼠标会穿透浮窗以免误触跳出游戏进程
+卸载功能也集合在了安装器里
 
 ## 效果展示
 
@@ -17,21 +22,16 @@
 
 <img width="800" height="450" alt="d3500313488a394f041060a4eaf6962d-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/5c965fc5-037a-4c3b-b1ec-4df9062bf8be" />
 
-
 ## 自定义颜色和自定义透明度
 
 <img width="987" height="408" alt="image" src="https://github.com/user-attachments/assets/af28e327-8a59-4be2-b24f-d9fe0f0dfdc8" />
 <img width="942" height="354" alt="image" src="https://github.com/user-attachments/assets/8a756099-032e-40d8-bb89-3c36c1ebb93c" />
 
+## 学分
 
-## 安装和使用
-
-双击[exe](https://github.com/E77zL/spotify_lyrics/releases/latest)打开安装器接受许可后选择安装卸载或修复  
-UI右下角麦克风左侧的图标为开关浮窗摁钮  
-Spotify左上角的购物车可以浏览Spicetify主题、扩展和CSS小组件  
-歌词窗口可拖动大小，鼠标抓住窗口右下角落缩放  
-在全屏游戏时鼠标会穿透浮窗以免误触跳出游戏进程
-卸载功能也集合在了安装器里
+基于 **[Fanbeixi / spotify-lyrics-HUD_CN](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)** 的衍生项目  
+在原作者基础上添加Spotify启动联动、图标摁钮开关、更好的UI和逐曲校时  
+完整署名见 [学分](CREDITS.md)  
 
 ## 功能
 
