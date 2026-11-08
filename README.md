@@ -6,7 +6,7 @@
 
 ## Installation and Usage
 
-Download and run the [EXE installer](https://github.com/E77zL/spotify_lyrics/releases/latest), accept the license agreement, then choose to install, uninstall, or repair.  
+Download and run the [EXE](https://github.com/E77zL/spotify_lyrics/releases/latest), accept the license agreement, then choose to install, uninstall, or repair.  
 The icon to the left of the microphone in Spotify's bottom-right playback controls toggles the lyrics window.  
 The shopping cart in Spotify's top-left corner opens Spicetify themes, extensions, and CSS snippets.  
 Drag the lyrics window to move it, or drag its bottom-right corner to resize it.  
