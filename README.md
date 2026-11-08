@@ -6,7 +6,7 @@
 在原作者基础上添加Spotify启动联动、图标摁钮开关、更好的UI和逐曲校时  
 完整署名见 [学分](CREDITS.md)  
 
-[下载最新构建版](https://github.com/E77zL/spotify-lyrics-better-hud/releases/latest) · [原作者项目](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)
+[下载最新构建版](https://github.com/E77zL/spotify_lyrics/releases/latest) · [原作者项目](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)
 
 ## 效果展示
 
