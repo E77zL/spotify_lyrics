@@ -2,11 +2,16 @@
 
 [简体中文](README.md) · **English**
 
-A derivative of **[Fanbeixi / spotify-lyrics-HUD_CN](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)**.  
-Adds Spotify startup integration, an in-app toggle, an improved interface, and per-track lyric timing adjustments.  
-Full attribution: [Credits](CREDITS.md).
-
 [Download the latest release](https://github.com/E77zL/spotify_lyrics/releases/latest) · [Original project](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)
+
+## Installation and Usage
+
+Download and run the [EXE installer](https://github.com/E77zL/spotify_lyrics/releases/latest), accept the license agreement, then choose to install, uninstall, or repair.  
+The icon to the left of the microphone in Spotify's bottom-right playback controls toggles the lyrics window.  
+The shopping cart in Spotify's top-left corner opens Spicetify themes, extensions, and CSS snippets.  
+Drag the lyrics window to move it, or drag its bottom-right corner to resize it.  
+During fullscreen games, mouse input passes through the lyrics window to prevent accidental clicks from taking focus away from the game.  
+Uninstallation is also available through the installer.
 
 ## Preview
 
@@ -22,14 +27,11 @@ Full attribution: [Credits](CREDITS.md).
 <img width="987" height="408" alt="Custom color settings" src="https://github.com/user-attachments/assets/af28e327-8a59-4be2-b24f-d9fe0f0dfdc8" />
 <img width="942" height="354" alt="Custom opacity settings" src="https://github.com/user-attachments/assets/8a756099-032e-40d8-bb89-3c36c1ebb93c" />
 
-## Installation and Usage
+## Credits
 
-Download and run the [EXE installer](https://github.com/E77zL/spotify_lyrics/releases/latest), accept the license agreement, then choose to install, uninstall, or repair.  
-The icon to the left of the microphone in Spotify's bottom-right playback controls toggles the lyrics window.  
-The shopping cart in Spotify's top-left corner opens Spicetify themes, extensions, and CSS snippets.  
-Drag the lyrics window to move it, or drag its bottom-right corner to resize it.  
-During fullscreen games, mouse input passes through the lyrics window to prevent accidental clicks from taking focus away from the game.  
-Uninstallation is also available through the installer.
+A derivative of **[Fanbeixi / spotify-lyrics-HUD_CN](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)**.  
+Adds Spotify startup integration, an in-app toggle, an improved interface, and per-track lyric timing adjustments.  
+Full attribution: [Credits](CREDITS.md).
 
 ## How It Works
 
