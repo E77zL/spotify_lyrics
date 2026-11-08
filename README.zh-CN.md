@@ -6,7 +6,7 @@
 
 ## 安装和使用
 
-双击[exe](https://github.com/E77zL/spotify_lyrics/releases/latest)打开安装器接受许可后选择安装卸载或修复  
+双击[EXE](https://github.com/E77zL/spotify_lyrics/releases/latest)打开安装器接受许可后选择安装卸载或修复  
 UI右下角麦克风左侧的图标为开关浮窗摁钮  
 Spotify左上角的购物车可以浏览Spicetify主题、扩展和CSS小组件  
 歌词窗口可拖动大小，鼠标抓住窗口右下角落缩放  
