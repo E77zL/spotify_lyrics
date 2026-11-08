@@ -33,7 +33,7 @@ Spotify左上角的购物车可以浏览Spicetify主题、扩展和CSS小组件
 在原作者基础上添加Spotify启动联动、图标摁钮开关、更好的UI和逐曲校时  
 完整署名见 [学分](CREDITS.md)  
 
-## 功能
+## 怎么工作的
 
 本软件仅在Spotify安装目录添加`version.dll`和`LyricsHUD/bridge.ini`
 模块将版本查询转发到Windows系统DLL，只在Spotify主进程启动歌词  
