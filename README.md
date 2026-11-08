@@ -13,12 +13,12 @@ Drag the lyrics window to move it, or drag its bottom-right corner to resize it.
 During fullscreen games, mouse input passes through the lyrics window to prevent accidental clicks from taking focus away from the game.  
 Uninstallation is also available through the installer.
 
-## Preview
+## Showcase
 
 <img width="1027" height="406" alt="Spotify Lyrics preview" src="https://github.com/user-attachments/assets/e98082e1-ec7a-4025-b987-02aab0d314d1" />
 <img width="2560" height="1440" alt="Fullscreen lyrics preview" src="https://github.com/user-attachments/assets/06597c5d-26e0-44b4-8ddf-730a7f596f39" />
 
-## Mouse Click-Through During Fullscreen Applications
+## Mouse Click-Through During Fullscreen Apps
 
 <img width="800" height="450" alt="Automatic mouse click-through demonstration" src="https://github.com/user-attachments/assets/5c965fc5-037a-4c3b-b1ec-4df9062bf8be" />
 
