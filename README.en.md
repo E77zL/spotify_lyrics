@@ -1,73 +1,60 @@
-# Spotify Lyrics Better HUD
+# Spotify Lyrics
 
 [简体中文](README.md) · **English**
 
-A derivative of **[Fanbeixi / spotify-lyrics-HUD_CN](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)**, maintained by [E77zL](https://github.com/E77zL).
-Adds Spotify lifecycle integration, an in-client toggle, a native desktop HUD, NetEase fallback and per-track lyric timing.
-This is an independently maintained repository. Upstream attribution and licenses are retained in [CREDITS.md](CREDITS.md), [NOTICE.txt](NOTICE.txt) and [licenses/](licenses/). Version numbers refer to this derivative, not the upstream project.
+A derivative of **[Fanbeixi / spotify-lyrics-HUD_CN](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)**.  
+Adds Spotify startup integration, an in-app toggle, an improved interface, and per-track lyric timing adjustments.  
+Full attribution: [Credits](CREDITS.md).
 
-[Download the latest build](https://github.com/E77zL/spotify-lyrics-better-hud/releases/latest) · [Original project](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)
+[Download the latest release](https://github.com/E77zL/spotify_lyrics/releases/latest) · [Original project](https://github.com/Fanbeixi/spotify-lyrics-HUD_CN)
 
 ## Preview
 
-<img width="1500" height="1000" alt="Spotify with the desktop lyrics HUD" src="https://github.com/user-attachments/assets/8fcde938-c67e-45d6-b507-bc0b4bc1a535" />
-<img width="2560" height="1440" alt="Fullscreen lyrics" src="https://github.com/user-attachments/assets/50b27097-ee33-426e-95b5-2a8e89d79ef8" />
+<img width="1027" height="406" alt="Spotify Lyrics preview" src="https://github.com/user-attachments/assets/e98082e1-ec7a-4025-b987-02aab0d314d1" />
+<img width="2560" height="1440" alt="Fullscreen lyrics preview" src="https://github.com/user-attachments/assets/06597c5d-26e0-44b4-8ddf-730a7f596f39" />
 
-### Automatic click-through over fullscreen apps
+## Mouse Click-Through During Fullscreen Applications
 
-<img width="800" height="450" alt="Desktop lyrics with fullscreen click-through" src="https://github.com/user-attachments/assets/4d2e6a5c-8a38-406d-b34a-5585d1e6998e" />
+<img width="800" height="450" alt="Automatic mouse click-through demonstration" src="https://github.com/user-attachments/assets/5c965fc5-037a-4c3b-b1ec-4df9062bf8be" />
 
-The HUD ignores mouse input while another fullscreen app is in the foreground, preventing accidental clicks from interrupting a game. Desktop and shell windows are excluded. Normal interaction returns when you switch to a windowed app or the desktop.
+## Custom Colors and Opacity
 
-### Colors and glass opacity
+<img width="987" height="408" alt="Custom color settings" src="https://github.com/user-attachments/assets/af28e327-8a59-4be2-b24f-d9fe0f0dfdc8" />
+<img width="942" height="354" alt="Custom opacity settings" src="https://github.com/user-attachments/assets/8a756099-032e-40d8-bb89-3c36c1ebb93c" />
 
-<img width="954" height="388" alt="Customizable lyric colors and background" src="https://github.com/user-attachments/assets/3ee0f1ce-0967-4773-b564-ad81ef69db77" />
-<img width="919" height="342" alt="Translucent lyrics background" src="https://github.com/user-attachments/assets/4a1d8029-215c-49d4-a7de-7246d9ccd8e9" />
+## Installation and Usage
 
-## Install and use
+Download and run the [EXE installer](https://github.com/E77zL/spotify_lyrics/releases/latest), accept the license agreement, then choose to install, uninstall, or repair.  
+The icon to the left of the microphone in Spotify's bottom-right playback controls toggles the lyrics window.  
+The shopping cart in Spotify's top-left corner opens Spicetify themes, extensions, and CSS snippets.  
+Drag the lyrics window to move it, or drag its bottom-right corner to resize it.  
+During fullscreen games, mouse input passes through the lyrics window to prevent accidental clicks from taking focus away from the game.  
+Uninstallation is also available through the installer.
 
-Requires Windows 10 or later, x64, and Spotify's desktop installer from its official website. The Microsoft Store version is not supported by this integration.
+## How It Works
 
-1. Download the latest setup EXE from Releases. Close Spotify, including its tray icon.
-2. Open the dark graphical installer, read and accept the license, then click **Next**.
-3. Select **Install / Repair** and click **Install**. Standard and administrator sessions are supported; elevated sessions pass `--bypass-admin` to Spicetify automatically.
-4. Open Spotify. Use the **A** icon to the left of the microphone in the bottom playback bar to toggle desktop lyrics.
+The software adds `version.dll` and `LyricsHUD/bridge.ini` to the Spotify installation directory.  
+The module forwards Windows version queries to the system DLL and starts the lyrics component only in Spotify's main process.  
+If another plugin already uses a DLL with the same name, the installer refuses to overwrite it.  
+Uninstallation removes only this project's integration module and preserves per-track timing adjustments.
 
-The default single-file installer reuses an existing Spicetify installation. If none is found, it downloads a pinned release and verifies its SHA256. The **Offline** installer includes that dependency; both variants provide the same features and include corresponding source and licenses.
+## Changelog
 
-Hover over the HUD to adjust typography, antialiasing, opacity, colors and per-song timing. Drag to move it and drag its lower-right edge to resize. Lyrics wrap to the available width. In the HUD's own fullscreen mode, Left/Right seek five seconds, Up/Down adjust Spotify volume, and Space pauses or resumes. Drag the top strip to return to a window.
+[View release notes](https://github.com/E77zL/spotify_lyrics/releases)
 
-Spotify's Marketplace entry opens themes, extensions and CSS snippets. These are optional; third-party customizations are not enabled by default.
+## Data and Licensing
 
-In setup, **Disable integration** removes the HUD integration and A button while preserving personal settings and unrelated extensions. **Check environment** inspects the installation without modifying it. The source icon at the bottom exports source and license files. Run **Install / Repair** again if a Spotify update removes the button or integration.
+The control service listens only on `127.0.0.1:27946` and uses a randomly generated authentication token created during installation. Connection details are stored in `%LOCALAPPDATA%/SpotifyLyricsCompanion/connection.json`.  
+This file contains a local secret and is not part of the published source code.  
+Interface settings are stored in `%APPDATA%/spotify-lyrics-hud`.  
+Source packages exclude connection secrets, per-track timing adjustments, and personal settings.
 
-## How it works
+Lyric searches send the song title, artist, and duration to the relevant service. No Spotify or NetEase account password is required.  
+This is not an official Spotify product. Lyrics belong to their respective rights holders.  
+The project and its integration code are MIT licensed. The original author's license is preserved in `licenses/HUD-LICENSE.txt`.  
+Spicetify CLI 2.46.4 is licensed under LGPL-2.1. Its corresponding source code and full license are included in the installer.  
+Spicetify Marketplace 1.0.12 is MIT licensed. Its full license is available in `licenses/MARKETPLACE-LICENSE.txt`. The integrated version disables catalog preloading at startup; sources and modifications are documented in [Credits](CREDITS.md).  
+Electron/Chromium license notices are retained. Details about other dependencies and modifications are available in [CREDITS.md](CREDITS.md) and [NOTICE.txt](NOTICE.txt).  
+See [RELEASING.md](RELEASING.md) for GitHub publishing and attribution instructions.
 
-- The HUD starts and exits with Spotify. There is no resident launcher, login monitor or automatic updater.
-- Installation adds `version.dll` and `LyricsHUD/bridge.ini` to Spotify's installation directory without modifying `Spotify.exe`. Windows version-query calls are forwarded to the system DLL; the HUD starts only in the main Spotify process.
-- An unrelated `version.dll` is never overwritten. Upgrades remove this project's legacy launcher and startup entries.
-- Lyrics are matched by track identity, including artist, rather than choosing the first song with the same title. Providers are tried in order: **LRCLIB → QQ Music → NetEase Music**, falling back when earlier providers have no usable match.
-- Per-track timing offsets are preserved when integration is disabled.
-- Windows Composition supplies glass blur; cached alpha edges keep the rounded corners smooth. No Electron runtime is distributed by the current native HUD.
-
-## Changelog and building
-
-[Changelog](CHANGELOG.md) · [Published releases](https://github.com/E77zL/spotify_lyrics/releases) · [Release and attribution guide](RELEASING.md)
-
-Build on Windows with Node.js 22+, a Visual Studio C++20 toolchain and a Windows SDK supporting Windows Composition. The graphical installer uses the Windows .NET Framework WPF components; no additional browser runtime is bundled.
-
-```powershell
-.\Build.ps1 -Offline
-```
-
-This builds both installer variants and the source archive under `dist/`, runs the regression and installer checks, and writes `SHA256SUMS.txt`. Add `-CacheDir <directory>` to reuse a verified dependency cache. Running without `-Offline` builds the default installer only. This repository does not include a GitHub Actions workflow; build locally and upload release files manually.
-
-## Data and licensing
-
-The local control service listens only on `127.0.0.1:27946` and authenticates requests using a token generated during installation. `%LOCALAPPDATA%/SpotifyLyricsCompanion/connection.json` contains this local secret and must not be published. UI settings are stored in `%APPDATA%/spotify-lyrics-hud`; per-track timing is stored under Spotify's `LyricsHUD` directory. Source packages exclude connection secrets, personal settings and timing data.
-
-Lyric queries send the song title, artist and duration to the relevant provider. You do not need to enter Spotify or NetEase account passwords into this software. Lyrics remain the property of their respective rights holders.
-
-This is not an official Spotify product. The HUD and integration code are MIT licensed; the upstream license is preserved verbatim in `licenses/HUD-LICENSE.txt`. Spicetify CLI 2.46.4 is LGPL-2.1 and its license and corresponding source are included in the installer. Spicetify Marketplace 1.0.12 is MIT licensed; its notices and startup modifications are documented in [CREDITS.md](CREDITS.md). Historical dependency notices remain in `licenses/`.
-
-OpenAI models assisted with implementation.
+Implemented with OpenAI models.
