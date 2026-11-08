@@ -1,0 +1,27 @@
+[
+  {
+    "name": "marketplace-v1.0.12.zip",
+    "url": "https://github.com/spicetify/marketplace/releases/download/v1.0.12/marketplace.zip",
+    "sha256": "43c8ccff189636cf2a8e8b5ca77e87487d22599ff8dc53b692170f92cbbb4e16"
+  },
+  {
+    "name": "spicetify-windows-x64.zip",
+    "url": "https://github.com/spicetify/cli/releases/download/v2.46.4/spicetify-2.46.4-windows-x64.zip",
+    "sha256": "0490380bf59e00c94cf6cb12bfac5152791b91bb8009aceef53c49815b45a56f"
+  },
+  {
+    "name": "spicetify-source-v2.46.4.tar.gz",
+    "url": "https://codeload.github.com/spicetify/cli/legacy.tar.gz/refs/tags/v2.46.4",
+    "sha256": "28d0e8bb3438ec0138e4005429a1d5825b355e11f40694584733785714d45d11"
+  },
+  {
+    "name": "7zip-bin-5.2.0.tgz",
+    "url": "https://registry.npmjs.org/7zip-bin/-/7zip-bin-5.2.0.tgz",
+    "sha256": "04f9738ee00be8be53f5d06254a9e6e4b5117b17f8b74058477d870e62764a7d"
+  },
+  {
+    "name": "ws-8.22.0.tgz",
+    "url": "https://registry.npmjs.org/ws/-/ws-8.22.0.tgz",
+    "sha256": "ca9b3798b2e11ce8fac6713f50ef0501aa12b09b330623c1dc409dff94e7abc8"
+  }
+]

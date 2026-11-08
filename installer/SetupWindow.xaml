@@ -1,0 +1,164 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Spotify Lyrics HUD Setup" Width="620" Height="436"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
+        Background="#0C0E11" Foreground="#E8EBF0" FontFamily="Segoe UI" FontSize="13"
+        UseLayoutRounding="True" SnapsToDevicePixels="True">
+  <Window.Resources>
+    <SolidColorBrush x:Key="Muted" Color="#8A909C"/>
+    <Style TargetType="Button" x:Key="Button">
+      <Setter Property="Foreground" Value="#E8EBF0"/>
+      <Setter Property="Background" Value="#1B1F27"/>
+      <Setter Property="BorderBrush" Value="#2A303A"/>
+      <Setter Property="Padding" Value="17,9"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value><ControlTemplate TargetType="Button">
+          <Border x:Name="Face" Background="{TemplateBinding Background}" CornerRadius="5"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Face" Property="Opacity" Value="0.8"/></Trigger>
+            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Face" Property="Opacity" Value="0.6"/></Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Face" Property="BorderBrush" Value="#82B3FA"/></Trigger>
+            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Face" Property="Opacity" Value="0.32"/></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate></Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="Button" x:Key="IconButton" BasedOn="{StaticResource Button}">
+      <Setter Property="Width" Value="30"/><Setter Property="Height" Value="30"/>
+      <Setter Property="Padding" Value="0"/><Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/><Setter Property="BorderBrush" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#9DA4B1"/>
+    </Style>
+    <Style TargetType="CheckBox">
+      <Setter Property="Foreground" Value="#E8EBF0"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox">
+        <StackPanel Orientation="Horizontal">
+          <Border x:Name="Box" Width="18" Height="18" CornerRadius="3" BorderBrush="#414956" BorderThickness="1" Background="#161A21">
+            <Path x:Name="Tick" Data="M 4,8 L 7,11 L 13,5" Stroke="White" StrokeThickness="1.5" Visibility="Collapsed"/>
+          </Border>
+          <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsChecked" Value="True"><Setter TargetName="Box" Property="Background" Value="#427CC9"/><Setter TargetName="Box" Property="BorderBrush" Value="#548FDC"/><Setter TargetName="Tick" Property="Visibility" Value="Visible"/></Trigger>
+          <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Box" Property="BorderBrush" Value="#A0C6FF"/></Trigger>
+        </ControlTemplate.Triggers>
+      </ControlTemplate></Setter.Value></Setter>
+    </Style>
+    <Style TargetType="RadioButton">
+      <Setter Property="Foreground" Value="#E8EBF0"/>
+      <Setter Property="Cursor" Value="Hand"/><Setter Property="Margin" Value="0,0,0,8"/>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
+        <Border x:Name="Card" CornerRadius="6" BorderThickness="1" BorderBrush="#262B34" Background="#13161C" Padding="16,11">
+          <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="22"/></Grid.ColumnDefinitions>
+            <ContentPresenter/>
+            <Ellipse x:Name="Ring" Grid.Column="1" Width="16" Height="16" Stroke="#4A5362" StrokeThickness="1.3"/>
+            <Ellipse x:Name="Dot" Grid.Column="1" Width="6" Height="6" Fill="#81B2F5" Visibility="Collapsed"/>
+          </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsChecked" Value="True"><Setter TargetName="Card" Property="Background" Value="#141E2D"/><Setter TargetName="Card" Property="BorderBrush" Value="#406493"/><Setter TargetName="Ring" Property="Stroke" Value="#81B2F5"/><Setter TargetName="Dot" Property="Visibility" Value="Visible"/></Trigger>
+          <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Card" Property="BorderBrush" Value="#6885AE"/></Trigger>
+          <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Card" Property="BorderBrush" Value="#A0C6FF"/></Trigger>
+        </ControlTemplate.Triggers>
+      </ControlTemplate></Setter.Value></Setter>
+    </Style>
+    <Style TargetType="ScrollBar">
+      <Setter Property="Width" Value="6"/><Setter Property="MaxWidth" Value="6"/>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar">
+        <Track x:Name="PART_Track" IsDirectionReversed="True">
+          <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False"/></Track.DecreaseRepeatButton>
+          <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="#343A45" CornerRadius="3" Margin="1"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+          <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False"/></Track.IncreaseRepeatButton>
+        </Track>
+      </ControlTemplate></Setter.Value></Setter>
+    </Style>
+  </Window.Resources>
+  <Border BorderBrush="#272B33" BorderThickness="1">
+    <Grid>
+      <Grid.RowDefinitions><RowDefinition Height="42"/><RowDefinition Height="*"/><RowDefinition Height="60"/></Grid.RowDefinitions>
+      <Border x:Name="TitleBar" Background="#0A0C0F">
+        <Grid Margin="14,0,8,0">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Border Width="21" Height="21" CornerRadius="4" BorderBrush="#64738A" BorderThickness="1" Margin="0,0,9,0">
+              <TextBlock Text="A" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#ABB6C8"/>
+            </Border>
+            <TextBlock Text="LYRICS HUD" Foreground="#929BAA" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <TextBlock x:Name="VersionLabel" Foreground="#555F70" FontSize="10" Margin="10,0,0,0" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="Minimize" Style="{StaticResource IconButton}" ToolTip="Minimize" AutomationProperties.Name="Minimize"><Path Data="M 0,0 L 9,0" Stroke="#939CA9" StrokeThickness="1"/></Button>
+            <Button x:Name="CloseWindow" Style="{StaticResource IconButton}" ToolTip="Close" AutomationProperties.Name="Close"><Path Data="M 0,0 L 8,8 M 8,0 L 0,8" Stroke="#939CA9" StrokeThickness="1.1"/></Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+      <Grid Grid.Row="1" Margin="24,18,24,0">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <StackPanel Margin="0,0,0,16">
+          <StackPanel Orientation="Horizontal">
+            <Path x:Name="SectionIcon" Data="M 0,6 L 8,1 L 16,6 Z M 2,9 L 2,16 M 6,9 L 6,16 M 10,9 L 10,16 M 14,9 L 14,16 M 0,19 L 16,19"
+                  Stroke="#669CE3" StrokeThickness="1.2" Width="18" Height="20" Stretch="Uniform" Margin="0,0,11,0"/>
+            <TextBlock x:Name="StepTitle" Text="License Agreement" FontSize="17" FontWeight="SemiBold" VerticalAlignment="Center"/>
+          </StackPanel>
+          <TextBlock x:Name="StepDescription" Text="A little credit to the people who made this possible." Foreground="{StaticResource Muted}" Margin="29,7,0,0" FontSize="12"/>
+        </StackPanel>
+        <Grid x:Name="LicensePage" Grid.Row="1">
+          <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="48"/></Grid.RowDefinitions>
+          <Border Background="#12151A" BorderBrush="#1C2028" BorderThickness="1" CornerRadius="5" Padding="14,12,7,12">
+            <ScrollViewer x:Name="LicenseScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <TextBlock x:Name="LicenseText" Foreground="#B8BFCA" FontSize="12" TextWrapping="Wrap" LineHeight="19" Margin="0,0,9,0"/>
+            </ScrollViewer>
+          </Border>
+          <CheckBox x:Name="AcceptLicense" Grid.Row="1" Content="I accept the license agreement." VerticalAlignment="Center"/>
+        </Grid>
+        <StackPanel x:Name="OptionsPage" Grid.Row="1" Visibility="Collapsed">
+          <RadioButton x:Name="InstallOption" GroupName="Action" IsChecked="True"><StackPanel><TextBlock Text="Install / Repair" FontWeight="SemiBold"/><TextBlock Text="Desktop lyrics, the Spotify A button and Marketplace." Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,0,0"/></StackPanel></RadioButton>
+          <RadioButton x:Name="DisableOption" GroupName="Action"><StackPanel><TextBlock Text="Disable integration" FontWeight="SemiBold"/><TextBlock Text="Remove the HUD integration. Keep your settings and other extensions." Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,0,0"/></StackPanel></RadioButton>
+          <RadioButton x:Name="DiagnoseOption" GroupName="Action"><StackPanel><TextBlock Text="Check environment" FontWeight="SemiBold"/><TextBlock Text="Inspect your installation without changing anything." Foreground="{StaticResource Muted}" FontSize="12" Margin="0,4,0,0"/></StackPanel></RadioButton>
+          <Grid Margin="0,2,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBlock x:Name="FolderLabel" Text="Spotify desktop · Windows 10 / 11" Foreground="#707B8D" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" FontSize="11" Margin="0,0,8,0"/>
+            <Button x:Name="BrowseSpotify" Grid.Column="1" Style="{StaticResource Button}" Content="Spotify folder…" Padding="10,5" FontSize="11"/>
+          </Grid>
+        </StackPanel>
+        <Grid x:Name="ProgressPage" Grid.Row="1" Visibility="Collapsed">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="25"/></Grid.RowDefinitions>
+          <TextBlock x:Name="StatusLabel" Text="Preparing…" Foreground="#B8BFCA" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,12"/>
+          <ProgressBar x:Name="Progress" Grid.Row="1" Height="4" Foreground="#568DD9" Background="#202733" BorderThickness="0" IsIndeterminate="True" Margin="0,0,0,14"/>
+          <Border Grid.Row="2" Background="#111419" CornerRadius="5" BorderBrush="#20252E" BorderThickness="1" Padding="12,10,6,10">
+            <TextBox x:Name="Log" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                     Background="Transparent" Foreground="#A3AEBE" BorderThickness="0" FontFamily="Consolas, Microsoft YaHei UI" FontSize="11" Padding="0"/>
+          </Border>
+          <TextBlock x:Name="CleanupLabel" Grid.Row="3" Text="Setup removes its temporary files when it finishes." FontSize="11" Foreground="#687487" VerticalAlignment="Center"/>
+        </Grid>
+        <ScrollViewer x:Name="HelpPage" Grid.Row="1" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <TextBlock Text="01   Install, then open Spotify" FontWeight="SemiBold" Margin="0,0,0,7"/>
+            <TextBlock Text="Choose Install / Repair after closing Spotify, including its tray icon. Both standard and administrator sessions are supported." TextWrapping="Wrap" Foreground="{StaticResource Muted}" LineHeight="19" Margin="0,0,0,16"/>
+            <TextBlock Text="02   Your lyrics, one click away" FontWeight="SemiBold" Margin="0,0,0,7"/>
+            <TextBlock Text="Use the A button to the left of Spotify's microphone. Hover over the lyrics for timing, type, opacity and color controls. Drag to move; resize from the edge." TextWrapping="Wrap" Foreground="{StaticResource Muted}" LineHeight="19" Margin="0,0,0,16"/>
+            <TextBlock Text="03   Built into your Spotify session" FontWeight="SemiBold" Margin="0,0,0,7"/>
+            <TextBlock Text="The HUD starts and exits with Spotify. LRCLIB → QQ Music → NetEase fallback. Run Install / Repair again if a Spotify update removes the integration." TextWrapping="Wrap" Foreground="{StaticResource Muted}" LineHeight="19" Margin="0,0,0,16"/>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+      <Border Grid.Row="2" BorderBrush="#1B1F27" BorderThickness="0,1,0,0" Margin="24,0,24,0">
+        <Grid>
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Button x:Name="ProjectLink" Style="{StaticResource IconButton}" ToolTip="Project on GitHub" AutomationProperties.Name="Project on GitHub"><Path Data="M 6,1 L 1,1 L 1,15 L 15,15 L 15,10 M 9,0 L 16,0 L 16,7 M 16,0 L 7,9" Stroke="#929CAA" StrokeThickness="1.2" Width="14" Height="14" Stretch="Uniform"/></Button>
+            <Button x:Name="Export" Style="{StaticResource IconButton}" ToolTip="Export source and licenses" AutomationProperties.Name="Export source and licenses" Margin="4,0,0,0"><Path Data="M 5,1 L 0,7 L 5,13 M 13,1 L 18,7 L 13,13 M 11,0 L 7,14" Stroke="#929CAA" StrokeThickness="1.2" Width="16" Height="14" Stretch="Uniform"/></Button>
+            <Button x:Name="Help" Style="{StaticResource IconButton}" Content="?" ToolTip="Quick guide" AutomationProperties.Name="Quick guide" FontSize="15" Margin="4,0,0,0"/>
+            <TextBlock x:Name="StepCount" Text="01 / 03" Foreground="#566173" FontSize="10" VerticalAlignment="Center" Margin="13,0,0,0"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button x:Name="Back" Style="{StaticResource Button}" Content="Back" Background="Transparent" BorderBrush="Transparent" Margin="0,0,9,0" IsEnabled="False"/>
+            <Button x:Name="Next" Style="{StaticResource Button}" Content="Next" MinWidth="75" Background="#3D75BE" BorderBrush="#4C86D0" FontWeight="SemiBold" IsEnabled="False" IsDefault="True"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Grid>
+  </Border>
+</Window>

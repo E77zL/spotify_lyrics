@@ -1,0 +1,12 @@
+.build/
+dist/
+.cache/
+node_modules/
+tests/*-test-*/
+tests/control-qa-*/
+tests/*-result.json
+connection.json
+lyric-offsets.json
+settings.json
+window-state.json
+*.log

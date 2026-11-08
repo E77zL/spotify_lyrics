@@ -1,0 +1,18 @@
+LIBRARY version
+EXPORTS
+    GetFileVersionInfoA=Hud_GetFileVersionInfoA
+    GetFileVersionInfoW=Hud_GetFileVersionInfoW
+    GetFileVersionInfoExA=Hud_GetFileVersionInfoExA
+    GetFileVersionInfoExW=Hud_GetFileVersionInfoExW
+    GetFileVersionInfoSizeA=Hud_GetFileVersionInfoSizeA
+    GetFileVersionInfoSizeW=Hud_GetFileVersionInfoSizeW
+    GetFileVersionInfoSizeExA=Hud_GetFileVersionInfoSizeExA
+    GetFileVersionInfoSizeExW=Hud_GetFileVersionInfoSizeExW
+    VerQueryValueA=Hud_VerQueryValueA
+    VerQueryValueW=Hud_VerQueryValueW
+    VerLanguageNameA=Hud_VerLanguageNameA
+    VerLanguageNameW=Hud_VerLanguageNameW
+    VerFindFileA=Hud_VerFindFileA
+    VerFindFileW=Hud_VerFindFileW
+    VerInstallFileA=Hud_VerInstallFileA
+    VerInstallFileW=Hud_VerInstallFileW

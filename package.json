@@ -1,0 +1,10 @@
+{
+  "name": "spotify-lyrics-hud-companion-source",
+  "version": "2.0.3",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "powershell -NoProfile -ExecutionPolicy Bypass -File Build.ps1",
+    "test": "node scripts/Test.cjs"
+  }
+}
